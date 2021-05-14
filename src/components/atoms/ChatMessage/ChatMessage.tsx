@@ -10,6 +10,8 @@ import { useProfileModalControls } from "hooks/useProfileModalControls";
 
 import { UserAvatar } from "components/atoms/UserAvatar";
 
+import Emoji from "react-emoji-render";
+
 import "./ChatMessage.scss";
 
 export interface ChatProps {
@@ -36,7 +38,9 @@ export const ChatMessage: React.FC<ChatProps> = ({
 
   return (
     <div className={containerStyles}>
-      <div className="chat-message__text">{text}</div>
+      <div className="chat-message__text">
+        <Emoji text={text} />
+      </div>
       <div className="chat-message__info" onClick={openAuthorProfile}>
         <UserAvatar user={author} />
         <span className="chat-message__author">{author.partyName}</span>
