@@ -10,7 +10,8 @@ import { useProfileModalControls } from "hooks/useProfileModalControls";
 
 import { UserAvatar } from "components/atoms/UserAvatar";
 
-import Emoji from "react-emoji-render";
+// import Emoji from "react-emoji-render";
+//import { toArray } from 'react-emoji-render';
 
 import "./ChatMessage.scss";
 
@@ -18,6 +19,33 @@ export interface ChatProps {
   message: MessageToDisplay;
   deleteMessage: () => void;
 }
+
+function httpHtml(content: string): string {
+  // TODO: better regex, anchor by end of word.  if used within parseEmojisAndUrls should be a full match AFIAK
+  const reg = /(https?:\/\/\w+\.\w+\S+)/g;
+  return content.replace(
+    reg,
+    "<a href='$1' target='_blank' rel='noopener'>$1</a>"
+  );
+}
+
+// const parseEmojisAndUrls = (
+//     value: string) => {
+//   const emojisArray = toArray(value);
+//
+//   // toArray outputs React elements for emojis and strings for other
+//   const newValue = emojisArray.reduce((previous, current) => {
+//     if (typeof current === "string") {
+//       return previous + httpHtml(current);
+//     }
+//     if (current) {
+//       return previous + current.props.children;
+//     }
+//     return previous
+//   }, "");
+//
+//   return newValue;
+// };
 
 export const ChatMessage: React.FC<ChatProps> = ({
   message,
@@ -36,11 +64,11 @@ export const ChatMessage: React.FC<ChatProps> = ({
     openUserProfileModal(author);
   }, [openUserProfileModal, author]);
 
+  //  const text_html = parseEmojisAndUrls(text);
+  const text_html = httpHtml(text);
   return (
     <div className={containerStyles}>
-      <div className="chat-message__text">
-        <Emoji text={text} />
-      </div>
+      <div className="chat-message__text">{text_html}</div>
       <div className="chat-message__info" onClick={openAuthorProfile}>
         <UserAvatar user={author} />
         <span className="chat-message__author">{author.partyName}</span>
