@@ -10,6 +10,7 @@ import {
   PLAYA_VENUE_STYLES,
 } from "settings";
 import { AdminVenueRoomsList } from "./AdminVenueRoomsList";
+import { RenderMarkdown } from "components/organisms/RenderMarkdown";
 
 export interface AdminVenuePreviewProps {
   venue: WithId<AnyVenue>;
@@ -125,7 +126,7 @@ export const AdminVenuePreview: React.FC<AdminVenuePreviewProps> = ({
               Long description:
             </span>
             <span className="content">
-              {venue.config?.landingPageConfig.description}
+              {RenderMarkdown(venue.config?.landingPageConfig.description)}
             </span>
           </div>
         </div>

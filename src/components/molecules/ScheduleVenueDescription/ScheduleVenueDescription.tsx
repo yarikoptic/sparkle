@@ -5,6 +5,7 @@ import classNames from "classnames";
 import { DEFAULT_VENUE_LOGO } from "settings";
 
 import { useRelatedVenues } from "hooks/useRelatedVenues";
+import { RenderMarkdown } from "components/organisms/RenderMarkdown";
 
 import "./ScheduleVenueDescription.scss";
 
@@ -44,7 +45,11 @@ export const ScheduleVenueDescription: FC<ScheduleVenueDescriptionProps> = ({
         </div>
       </div>
       <div className="ScheduleVenueDescription__desc">
-        <p>{sovereignVenue?.config?.landingPageConfig?.description}</p>
+        <p>
+          {RenderMarkdown(
+            sovereignVenue?.config?.landingPageConfig?.description
+          )}
+        </p>
       </div>
     </div>
   );
