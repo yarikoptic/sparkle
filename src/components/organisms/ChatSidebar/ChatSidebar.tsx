@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,6 +8,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { VenueChat, PrivateChats } from "./components";
+
+import { Resizable } from "re-resizable";
 
 import { useChatSidebarControls, useChatSidebarInfo } from "hooks/chatSidebar";
 
@@ -40,39 +42,57 @@ export const ChatSidebar: React.FC = () => {
       chatSettings.openedChatType === ChatTypes.PRIVATE_CHAT,
   });
 
+  const widthStorageKey = "chatSideBarWidth";
+  const initWidth = localStorage.getItem(widthStorageKey);
+  let [width, setWidth] = useState<number>(initWidth ? +initWidth : 400);
+
   return (
     <div className={containerStyles}>
-      <div className="chat-sidebar__header">
-        <div className="chat-sidebar__controller" onClick={toggleSidebar}>
-          {isExpanded ? (
-            <FontAwesomeIcon icon={faChevronRight} size="sm" />
-          ) : (
-            <>
-              <FontAwesomeIcon icon={faChevronLeft} size="sm" />
-              <FontAwesomeIcon
-                className="chat-sidebar__controller__second-icon"
-                icon={faCommentDots}
-                size="lg"
-              />
-            </>
+      <Resizable
+        defaultSize={{
+          width,
+          height: "100%",
+        }}
+        onResizeStop={(_e, _direction, _ref, d) => {
+          setWidth(width + d.width);
+          localStorage.setItem(widthStorageKey, width.toString());
+        }}
+        enable={{ left: true }}
+      >
+        <div className="chat-sidebar__header">
+          <div className="chat-sidebar__controller" onClick={toggleSidebar}>
+            {isExpanded ? (
+              <FontAwesomeIcon icon={faChevronRight} size="sm" />
+            ) : (
+              <>
+                <FontAwesomeIcon icon={faChevronLeft} size="sm" />
+                <FontAwesomeIcon
+                  className="chat-sidebar__controller__second-icon"
+                  icon={faCommentDots}
+                  size="lg"
+                />
+              </>
+            )}
+          </div>
+
+          <div className="chat-sidebar__tabs">
+            <div className={venueChatTabStyles} onClick={selectVenueChat}>
+              {venueChatTabTitle}
+            </div>
+            <div className={privateChatTabStyles} onClick={selectPrivateChat}>
+              {privateChatTabTitle}
+            </div>
+          </div>
+        </div>
+        <div className="chat-sidebar__tab-content">
+          {chatSettings.openedChatType === ChatTypes.VENUE_CHAT && (
+            <VenueChat />
+          )}
+          {chatSettings.openedChatType === ChatTypes.PRIVATE_CHAT && (
+            <PrivateChats recipientId={chatSettings.recipientId} />
           )}
         </div>
-
-        <div className="chat-sidebar__tabs">
-          <div className={venueChatTabStyles} onClick={selectVenueChat}>
-            {venueChatTabTitle}
-          </div>
-          <div className={privateChatTabStyles} onClick={selectPrivateChat}>
-            {privateChatTabTitle}
-          </div>
-        </div>
-      </div>
-      <div className="chat-sidebar__tab-content">
-        {chatSettings.openedChatType === ChatTypes.VENUE_CHAT && <VenueChat />}
-        {chatSettings.openedChatType === ChatTypes.PRIVATE_CHAT && (
-          <PrivateChats recipientId={chatSettings.recipientId} />
-        )}
-      </div>
+      </Resizable>
     </div>
   );
 };
